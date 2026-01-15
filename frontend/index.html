@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Product Lookup</title>
+</head>
+<body>
+
+<h2>Product Lookup</h2>
+
+<input id="productCode" placeholder="Enter Product Code" />
+<button onclick="fetchProduct()">Submit</button>
+
+<div id="result" style="margin-top:20px;"></div>
+
+<script>
+async function fetchProduct() {
+  const productCode = document.getElementById("productCode").value.trim();
+  if (!productCode) {
+    alert("Please enter a product code");
+    return;
+  }
+
+  const response = await fetch("http://127.0.0.1:8000/product", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ productCode })
+  });
+
+  const data = await response.json();
+
+  if (!data || data.length === 0) {
+    document.getElementById("result").innerHTML = "<b>No product found</b>";
+    return;
+  }
+
+  const p = data[0];
+
+  document.getElementById("result").innerHTML = `
+    <h3>Product Details</h3>
+    <p><b>Code:</b> ${p.PRODUCT_CODE}</p>
+    <p><b>Name:</b> ${p.PRODUCT_NAME}</p>
+    <p><b>Description:</b> ${p.PRODUCT_DESC}</p>
+    <p><b>Category:</b> ${p.CATEGORY} / ${p.SUB_CATEGORY}</p>
+    <p><b>Unit:</b> ${p.UNIT_OF_MEASURE}</p>
+    <p><b>Price:</b> ${p.UNIT_PRICE}</p>
+    <p><b>Status:</b> ${p.PRODUCT_STATUS}</p>
+  `;
+}
+</script>
+
+</body>
+</html>
