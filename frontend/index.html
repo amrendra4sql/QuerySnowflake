@@ -1,79 +1,27 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Product Lookup</title>
-  <style>
-    body { font-family: Arial, sans-serif; margin: 40px; background:#f7f7f7; }
-    h2 { color: #2c3e50; }
-    input { padding: 8px; width: 250px; }
-    button { padding: 8px 16px; background:#3498db; color:white; border:none; cursor:pointer; }
-    button:hover { background:#2980b9; }
-    table { border-collapse: collapse; width: 100%; margin-top:20px; }
-    th, td { border:1px solid #ddd; padding:8px; text-align:left; }
-    th { background:#3498db; color:white; }
-    #loader { display:none; }
-    #error { color:red; }
-  </style>
+  <title>AI Application</title>
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-<h2>Product Lookup</h2>
-<input id="productCode" placeholder="Enter Product Code" />
-<button onclick="fetchProduct()">Submit</button>
-<span id="loader">⏳ Loading...</span>
-<div id="error"></div>
-<div id="result"></div>
+<h2>AI Application</h2>
 
+<div class="tabs">
+  <button onclick="loadPage('product')">Product Lookup</button>
+  <button onclick="loadPage('ai-search')">AI Search</button>
+</div>
+
+<div id="content">
+  <!-- Pages will load here -->
+</div>
+
+<script src="js/loader.js"></script>
+
+<!-- Load default page -->
 <script>
-async function fetchProduct() {
-  const productCode = document.getElementById("productCode").value.trim();
-  if(!productCode) return alert("Please enter a product code");
-
-  document.getElementById("loader").style.display = "inline";
-  document.getElementById("result").innerHTML = "";
-  document.getElementById("error").innerHTML = "";
-
-  try {
-    const response = await fetch("http://127.0.0.1:8000/product", {
-      method: "POST",
-      headers: {"Content-Type":"application/json"},
-      body: JSON.stringify({productCode})
-    });
-
-    const data = await response.json();
-
-    if(data.error){
-      document.getElementById("error").innerText = data.error;
-      return;
-    }
-
-    if(data.length === 0){
-      document.getElementById("result").innerHTML = "<b>No product found</b>";
-      return;
-    }
-
-    // Build HTML table
-    let table = "<table><tr>";
-    for(const key in data[0]) table += `<th>${key}</th>`;
-    table += "</tr>";
-
-    data.forEach(p=>{
-      table += "<tr>";
-      for(const key in p){
-        table += `<td>${p[key] !== null ? p[key] : ""}</td>`;
-      }
-      table += "</tr>";
-    });
-    table += "</table>";
-
-    document.getElementById("result").innerHTML = table;
-
-  } catch(e){
-    document.getElementById("error").innerText = e;
-  } finally {
-    document.getElementById("loader").style.display = "none";
-  }
-}
+  loadPage('product');
 </script>
 
 </body>
